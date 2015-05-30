@@ -80,6 +80,6 @@ app.use(function(err, req, res, next) {
     });
 });
 
-http.listen(PORT);
+http.listen(PORT, "0.0.0.0");
 
 module.exports = app;

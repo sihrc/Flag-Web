@@ -39,17 +39,6 @@ module.exports = function(db){
       unique: true,
       allowNull: false
     },
-    password: {
-      type: Sequelize.VIRTUAL,
-      set: function (val) {
-        try{
-          var hash = scrypt.hash(val, scryptParameters);
-          this.setDataValue('hash', hash);
-        } catch (err) {
-          // handle error
-        }
-      }
-    },
     lat: {
       type: Sequelize.FLOAT,
       unique: false,
@@ -65,9 +54,6 @@ module.exports = function(db){
     paranoid: true,
     freezeTableName: true,
     instanceMethods: {
-      validPassword: function(password) {
-        return scrypt.verify(this.hash, password);
-      },
       getReturnable: function() {
         var self = this;
 

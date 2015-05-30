@@ -15,9 +15,6 @@ module.exports = {
                 updatedAt: {
                     type: DataTypes.DATE
                 },
-                deletedAt: {
-                    type: DataTypes.DATE
-                },
                 email: {
                     type: DataTypes.STRING,
                     unique: true,

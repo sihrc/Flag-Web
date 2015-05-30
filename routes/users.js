@@ -10,40 +10,45 @@ module.exports = function(sequelize){
   // User.belongsToMany(Collection, {through: CollectionUser});
 
   // POST new user request
-  router.post('/new', function(req, res){
+  router.get('/:phone', function(req, res){
+    console.log(req.params.phone);
     User.find({
       where: {
-          phone: req.body.phone
+        phone: req.params.phone
       }
     })
     .then(function(user){
-      if (user){
-        res.json({"error": 0, "message": "User exists", "user": user});
+      if (user) {
+        res.json({"error": 0, "data": user});
       } else {
-        if (req.body.name && req.body.phone){
-          var user = User.build({
-            name: req.body.name,
-            phone: req.body.phone
-          });
-          user
-            .save()
-            .then(function(user){
-              if (user) {
-                res.json({"error": 0, "message": "Request received", "user": user});
-              }
-            })
-            .catch(function(err){
-              error(err, res);
-            });
-        } else {
-          error("Insufficient information to create user", res);
-        }
-
+        error("User not found", res);
       }
     })
     .catch(function(err){
       error(err, res);
     });
+  });
+
+  router.post('/new', function createUser(req, res) {
+    console.log(req.body.phone);
+    if (req.body.name && req.body.phone){
+      var user = User.build({
+        name: req.body.name,
+        phone: req.body.phone
+      });
+      user
+        .save()
+        .then(function(user){
+          if (user) {
+            res.json({"error": 0, "message": "Request received", "data": user});
+          }
+        })
+        .catch(function(err){
+          error(err, res);
+        });
+    } else {
+      error("Insufficient information to create user", res);
+    }
   });
 
   router.get('/all', function(req, res){
@@ -59,28 +64,6 @@ module.exports = function(sequelize){
         })})
       } else {
         error("No users found", res);
-      }
-    })
-    .catch(function(err){
-      error(err, res);
-    });
-  });
-
-  // GET user by phonenumber
-  router.get('/:phone', function(req, res){
-    User.find({
-      where: {
-        phone: req.params.phone
-      },
-      include: [
-        {model: Collection}
-      ]
-    })
-    .then(function(user){
-      if (user) {
-        res.json({"error": 0, "user": user.getReturnable()});
-      } else {
-        error("User not found", res);
       }
     })
     .catch(function(err){
